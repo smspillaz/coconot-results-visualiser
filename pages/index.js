@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../Layout'
-import { Collapse, Table } from 'reactstrap'
+import { Card, Collapse, Table } from 'reactstrap'
 
 class Canvas extends React.Component {
     componentDidMount() {
@@ -178,8 +178,15 @@ class IndexPage extends React.Component {
         return (
             <div>
                 <Layout>
-                    <h1>Coconot - Detected Road Signs</h1>
-                    <VideoDataTable data={this.state.data} />
+                    <h1 style={{ marginTop: '0.5em' }}>Coconot - Detected Road Signs</h1>
+                    {this.state.data.map(videoMap => (
+                        <div key={videoMap.directory} style={{ padding: '0.5em' }}>
+                            <Card>
+                                <h2 style={{ margin: '0.5em' }}>{videoMap.directory}</h2>
+                                <VideoDataTable data={videoMap.values} />
+                            </Card>
+                        </div>
+                     ))}
                 </Layout>
             </div>
         )
