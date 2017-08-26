@@ -178,7 +178,11 @@ class IndexPage extends React.Component {
         return (
             <div>
                 <Layout>
-                    <h1 style={{ marginTop: '0.5em' }}>Coconot - Detected Road Signs</h1>
+                    <div>
+                        <img src='/web/coconut.jpg' style={{ display: 'inline' }}></img>
+                        {' '}
+                        <h1 style={{ marginTop: '0.5em', display: 'inline' }}>Coconot - Detected Road Signs</h1>
+                    </div>
                     {this.state.data.map(videoMap => (
                         <div key={videoMap.directory} style={{ padding: '0.5em' }}>
                             <Card>

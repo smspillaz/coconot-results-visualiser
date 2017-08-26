@@ -54,7 +54,8 @@ app.prepare().then(() => {
     ).then(valueMaps => res.json(valueMaps)).catch(e => console.error(e.stack))
   })
 
-  expressApp.use('/static', express.static('output'))/
+  expressApp.use('/static', express.static('output'))
+  expressApp.use('/web', express.static('web'))
 
   expressApp.get('*', (req, res) => {
     return handle(req, res)
