@@ -11,7 +11,6 @@ class IndexPage extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Component did mount");
         fetch('/table').then(d => d.json()).then(json => this.setState({
             data: json
         }))
