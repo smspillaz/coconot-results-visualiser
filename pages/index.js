@@ -1,3 +1,9 @@
+import Layout from '../Layout'
+
 export default() => (
-    <div>Welcome to next.js</div>
+    <div>
+        <Layout>
+            <div>Welcome to next.js</div>
+        </Layout>
+    </div>
 )
