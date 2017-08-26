@@ -111,7 +111,7 @@ class VideoDataTable extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.data.map((row, i) => ([
+                        {this.props.data.filter(row => row.probability > 0.70).map((row, i) => ([
                             () => (
                                 <tr
                                   key={row.dist + ' ' + i}
