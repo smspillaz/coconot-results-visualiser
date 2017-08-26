@@ -43,7 +43,7 @@ class IndexPage extends React.Component {
                                     <td>{row.date}</td>
                                     <td>{row.dist}</td>
                                     <td>{row.detected}</td>
-                                    <td>{row.probability}</td>
+                                    <td>{`${Math.trunc(row.probability * 10000) / 100}%`}</td>
                                  </tr>
                              ))}
                         </tbody>
