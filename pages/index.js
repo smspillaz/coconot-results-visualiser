@@ -102,7 +102,6 @@ class VideoDataTable extends React.Component {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Video File</th>
                             <th>Road Name</th>
                             <th>Date</th>
                             <th>Distance</th>
@@ -117,7 +116,6 @@ class VideoDataTable extends React.Component {
                                   key={row.dist + ' ' + i}
                                   onClick={() => this.handleRowClicked(i)}>
                                     <th>{i}</th>
-                                    <td>{row.video}</td>
                                     <td>{row.name}</td>
                                     <td>{row.date}</td>
                                     <td>{row.dist}</td>
