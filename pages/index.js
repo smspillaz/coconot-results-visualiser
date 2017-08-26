@@ -31,6 +31,7 @@ class IndexPage extends React.Component {
                                 <th>Date</th>
                                 <th>Distance</th>
                                 <th>Detected Sign</th>
+                                <th>Probability</th>
                             </tr>
                         </thead>
                         <tbody>
