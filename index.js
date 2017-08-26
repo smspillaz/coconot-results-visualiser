@@ -1,6 +1,7 @@
 const express = require('express');
 const { parse } = require('url')
 const next = require('next')
+const CsvReader = require('promised-csv')
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -8,20 +9,23 @@ const handle = app.getRequestHandler()
 
 const expressApp = express()
 
+function distToNum(dist) {
+  return Number(dist.slice(0, -2))
+}
+
 app.prepare().then(() => {
   expressApp.get('/', (req, res) => app.render(req, res, '/'))
 
   expressApp.get('/table', (req, res) => {
-    res.json([
-      {
-        video: 'videoL.mkv',
-        name: 'Great Eastern Highway',
-        date: '2017/07/27',
-        dist: '27.7km',
-        detected: 'sign',
-        probability: '0.83'
-      }
-    ])
+    (new CsvReader()).read('output/videoL/results.csv', (row) => {
+      const [img, name, dist, date, detected, probability, x1, x2, y1, y2] = row;
+      return { img, name, dist, date, detected, probability, x1, x2, y1, y2 }
+    }).then(values => {
+      values.sort((left, right) =>
+        distToNum(left.dist) - distToNum(right.dist)
+      )
+      res.json(values)
+    })
   })
 
   expressApp.get('*', (req, res) => {
