@@ -30,7 +30,7 @@ class IndexPage extends React.Component {
                                 <th>Road Name</th>
                                 <th>Date</th>
                                 <th>Distance</th>
-                                <th>Detected Object</th>
+                                <th>Detected Sign</th>
                             </tr>
                         </thead>
                         <tbody>
