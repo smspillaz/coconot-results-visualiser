@@ -1,0 +1,18 @@
+{
+  "name": "visualize-mrwa-table",
+  "version": "1.0.0",
+  "description": "A simple table-visualizer for main roads signage data",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.4",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}
