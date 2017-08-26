@@ -34,9 +34,9 @@ class IndexPage extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.data.map(row => (
-                                 <tr>
-                                    <th scope="row">1</th>
+                            {this.state.data.map((row, i) => (
+                                 <tr key={row.dist + ' ' + i}>
+                                    <th scope="row">{i}</th>
                                     <td>{row.video}</td>
                                     <td>{row.name}</td>
                                     <td>{row.date}</td>
