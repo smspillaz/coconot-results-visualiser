@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path')
 const { parse } = require('url')
 const next = require('next')
 const CsvReader = require('promised-csv')
@@ -18,8 +19,19 @@ app.prepare().then(() => {
 
   expressApp.get('/table', (req, res) => {
     (new CsvReader()).read('output/videoL/results.csv', (row) => {
-      const [img, name, dist, date, detected, probability, x1, x2, y1, y2] = row;
-      return { img, name, dist, date, detected, probability, x1, x2, y1, y2 }
+      const [img, name, dist, date, detected, probability, x1, x2, y1, y2] = row
+      return {
+        img: path.join('/static', 'videoL', img),
+        name,
+        dist,
+        date,
+        detected,
+        probability,
+        x1,
+        x2,
+        y1,
+        y2
+      }
     }).then(values => {
       values.sort((left, right) =>
         distToNum(left.dist) - distToNum(right.dist)
@@ -27,6 +39,8 @@ app.prepare().then(() => {
       res.json(values)
     })
   })
+
+  expressApp.use('/static', express.static('output'))/
 
   expressApp.get('*', (req, res) => {
     return handle(req, res)
