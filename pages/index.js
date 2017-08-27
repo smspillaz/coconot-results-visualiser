@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '../Layout'
 import { Badge, Card, Col, Collapse, Container, ListGroup, ListGroupItem, Row, Table } from 'reactstrap'
 
-const PROBABILITY_THRESHOLD = 0.40
+const PROBABILITY_THRESHOLD = 0.7
 
 class Canvas extends React.Component {
     componentDidMount() {
