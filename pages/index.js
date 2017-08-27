@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../Layout'
-import { Card, Collapse, Table } from 'reactstrap'
+import { Badge, Card, Col, Collapse, Container, ListGroup, ListGroupItem, Row, Table } from 'reactstrap'
 
 class Canvas extends React.Component {
     componentDidMount() {
@@ -44,21 +44,46 @@ class Preview extends React.Component {
 
         const aspect = this.state.image.naturalWidth / this.state.image.naturalHeight;
         const height = this.props.width / aspect;
+        const scale =  this.props.width / this.state.image.naturalWidth;
 
         return (
-            <Canvas
-                width={this.props.width}
-                height={height}
-                render={(ctx, width, height) => {
-                    ctx.drawImage(this.state.image, 0, 0)
-                    ctx.strokeStyle = "#ff0000"
-                    ctx.lineWidth = 3
-                    ctx.strokeRect(this.props.box.x1,
-                                   this.props.box.y1,
-                                   this.props.box.x2 - this.props.box.x1,
-                                   this.props.box.y2 - this.props.box.y1)
-                }}
-            />
+            <div>
+                <Row style={{ padding: 12 }}>
+                    <Col xs="12" md="5">
+                        <Canvas
+                            width={this.props.width}
+                            height={height}
+                            render={(ctx, width, height) => {
+                                ctx.scale(scale, scale)
+                                ctx.drawImage(this.state.image, 0, 0)
+                                ctx.strokeStyle = "#ff0000"
+                                ctx.lineWidth = 3
+                                this.props.detections.forEach(detection =>
+                                    ctx.strokeRect(detection.x1,
+                                                   detection.y1,
+                                                   detection.x2 - detection.x1,
+                                                   detection.y2 - detection.y1)
+                                )
+                                
+                            }}
+                        />
+                    </Col>
+                    <Col xs="12" md={{ offset: 1, size: 6 }}>
+                        <div>
+                            <ListGroup>
+                                {this.props.detections.map(detection => (
+                                    <ListGroupItem
+                                      className="justify-content-between"
+                                      key={detection.probability}
+                                    >
+                                      {detection.detected} <Badge pill>{Math.trunc(detection.probability * 10000) / 100}%</Badge>
+                                    </ListGroupItem>
+                                 ))}
+                            </ListGroup>
+                        </div>
+                    </Col>
+                </Row>
+            </div>
         )
     }
 }
@@ -105,12 +130,12 @@ class VideoDataTable extends React.Component {
                             <th>Road Name</th>
                             <th>Date</th>
                             <th>Distance</th>
-                            <th>Detected Sign</th>
-                            <th>Probability</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.data.filter(row => row.probability > 0.70).map((row, i) => ([
+                        {this.props.data.filter(row =>
+                            row.detections.filter(d => d.probability > 0.70).length > 0
+                         ).map((row, i) => ([
                             () => (
                                 <tr
                                   key={row.dist + ' ' + i}
@@ -119,30 +144,25 @@ class VideoDataTable extends React.Component {
                                     <td>{row.name}</td>
                                     <td>{row.date}</td>
                                     <td>{row.dist}</td>
-                                    <td>{row.detected}</td>
-                                    <td>{`${Math.trunc(row.probability * 10000) / 100}%`}</td>
                                 </tr>
                             ),
                             () => (
                                 <tr>
                                     <td
-                                      colSpan={"7"}
+                                      colSpan={"4"}
                                       style={{
                                         paddingTop: 0,
                                         paddingBottom: 0,
+                                        paddingLeft: 0,
+                                        paddingRight: 0,
                                         textAlign: 'center'
                                       }}
                                     >
                                         <CollapsablePreview open={activeRow === i}>
                                             <Preview
                                               image={row.img}
-                                              box={{
-                                                x1: row.x1,
-                                                y1: row.y1,
-                                                x2: row.x2,
-                                                y2: row.y2
-                                              }}
-                                              width={960}
+                                              detections={row.detections.filter(d => d.probability > 0.70)}
+                                              width={480}
                                             />
                                         </CollapsablePreview>
                                     </td>
@@ -157,6 +177,46 @@ class VideoDataTable extends React.Component {
         )
     }
 }
+
+function mapToKeysAndValues(object) {
+    return Object.keys(object).map(key => ({ key, value: object[key] }))
+}
+
+const VideoCard = ({ videoMap }) => (
+    <div key={videoMap.directory} style={{ padding: '0.5em' }}>
+        <Card>
+            <h2 style={{ margin: '0.5em' }}>{videoMap.directory}</h2>
+            <Row style={{ padding: 12 }}>
+                <Col md="12">
+                    <h3>{'Overall Statistics'}</h3>
+                </Col>
+                <Col md="12">
+                    <ListGroup>
+                        {mapToKeysAndValues(videoMap.values.reduce((counts, incoming) => {
+                            incoming.detections.forEach((detection) => {
+                                const { detected } = detection
+                                if (!counts[detected]) {
+                                    counts[detected] = 1;
+                                } else {
+                                    counts[detected]++
+                                }
+                            })
+                            return counts
+                        }, {})).map(({ key, value}) => (
+                            <ListGroupItem
+                              className="justify-content-between"
+                              key={key}
+                            >
+                              {key} <Badge pill>{value}</Badge>
+                            </ListGroupItem>
+                        ))}
+                    </ListGroup>
+                </Col>
+            </Row>
+            <VideoDataTable data={videoMap.values} />
+        </Card>
+    </div>
+)
 
 class IndexPage extends React.Component {
     constructor() {
@@ -182,12 +242,7 @@ class IndexPage extends React.Component {
                         <h1 style={{ marginTop: '0.5em', display: 'inline' }}>Coconot - Detected Road Signs</h1>
                     </div>
                     {this.state.data.map(videoMap => (
-                        <div key={videoMap.directory} style={{ padding: '0.5em' }}>
-                            <Card>
-                                <h2 style={{ margin: '0.5em' }}>{videoMap.directory}</h2>
-                                <VideoDataTable data={videoMap.values} />
-                            </Card>
-                        </div>
+                        <VideoCard videoMap={videoMap}/>
                      ))}
                 </Layout>
             </div>

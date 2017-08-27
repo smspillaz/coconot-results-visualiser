@@ -45,9 +45,40 @@ app.prepare().then(() => {
               values.sort((left, right) =>
                 distToNum(left.dist) - distToNum(right.dist)
               )
+
+              /* Group the values by the distance marker */
+              let currentImage = ''
+              const groupedValues = []
+
+              values.forEach((value) => {
+                if (value.img !== currentImage) {
+                  groupedValues.push({
+                    img: value.img,
+                    name: value.name,
+                    dist: value.dist,
+                    date: value.date,
+                    detections: []
+                  })
+                  currentImage = value.img
+                }
+
+                /* Now push our current detection into the detections for
+                 * this group */
+                const end = groupedValues[groupedValues.length - 1];
+                const { detected, probability, x1, x2, y1, y2 } = value
+                end.detections.push({
+                  detected,
+                  probability,
+                  x1,
+                  x2,
+                  y1,
+                  y2
+                })
+              })
+
               return {
                 directory,
-                values
+                values: groupedValues
               }
             })
         ))
