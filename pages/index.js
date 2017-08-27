@@ -108,18 +108,24 @@ class VideoDataTable extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            activeRow: -1
+            activeRows: []
         }
     }
 
     handleRowClicked(rowIndex) {
-        this.setState({
-            activeRow: (this.state.activeRow === rowIndex) ? -1 : rowIndex
-        })
+        if (this.state.activeRows.indexOf(rowIndex) === -1) {
+            this.setState({
+                activeRows: [...this.state.activeRows, rowIndex]
+            })
+        } else {
+            this.setState({
+                activeRows: this.state.activeRows.filter(i => i !== rowIndex)
+            })
+        }
     }
 
     render() {
-        const activeRow = this.state.activeRow
+        const activeRows = new Set(this.state.activeRows)
 
         return (
             <div>
@@ -158,7 +164,7 @@ class VideoDataTable extends React.Component {
                                         textAlign: 'center'
                                       }}
                                     >
-                                        <CollapsablePreview open={activeRow === i}>
+                                        <CollapsablePreview open={activeRows.has(i)}>
                                             <Preview
                                               image={row.img}
                                               detections={row.detections.filter(d => d.probability > 0.70)}
