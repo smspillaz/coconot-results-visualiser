@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "npm run build && node index.js",
-    "postinstall": "wget https://s3-ap-southeast-2.amazonaws.com/coconot-results-data/output.tar.bz2 && tar xjvf output.tar.bz2"
+    "start": "node index.js",
+    "postinstall": "wget https://s3-ap-southeast-2.amazonaws.com/coconot-results-data/output.tar.bz2 && tar xjvf output.tar.bz2 && npm run build"
   },
   "author": "",
   "license": "ISC",
