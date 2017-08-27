@@ -2,6 +2,8 @@ import React from 'react';
 import Layout from '../Layout'
 import { Badge, Card, Col, Collapse, Container, ListGroup, ListGroupItem, Row, Table } from 'reactstrap'
 
+const PROBABILITY_THRESHOLD = 0.40
+
 class Canvas extends React.Component {
     componentDidMount() {
         const ctx = this.refs.canvas.getContext('2d');
@@ -140,7 +142,7 @@ class VideoDataTable extends React.Component {
                     </thead>
                     <tbody>
                         {this.props.data.filter(row =>
-                            row.detections.filter(d => d.probability > 0.70).length > 0
+                            row.detections.filter(d => d.probability >= PROBABILITY_THRESHOLD).length > 0
                          ).map((row, i) => ([
                             () => (
                                 <tr
@@ -167,7 +169,7 @@ class VideoDataTable extends React.Component {
                                         <CollapsablePreview open={activeRows.has(i)}>
                                             <Preview
                                               image={row.img}
-                                              detections={row.detections.filter(d => d.probability > 0.70)}
+                                              detections={row.detections.filter(d => d.probability >= PROBABILITY_THRESHOLD)}
                                               width={480}
                                             />
                                         </CollapsablePreview>
@@ -201,6 +203,10 @@ const VideoCard = ({ videoMap }) => (
                         {mapToKeysAndValues(videoMap.values.reduce((counts, incoming) => {
                             incoming.detections.forEach((detection) => {
                                 const { detected } = detection
+
+                                if (detected.probability < PROBABILITY_THRESHOLD)
+                                    return
+
                                 if (!counts[detected]) {
                                     counts[detected] = 1;
                                 } else {
